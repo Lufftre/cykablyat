@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}YOYO{% endblock %}
+{% block content %}
+<p class="lead">Cykla blöt</p>
+<p>;)</p>
+<img id="img" src="{{ url_for('static', filename='images/pic.jpg') }}">
+<table class="table-center">
+<tr>
+  <td>Stereo</td>
+
+  <td>
+  <a href="javascript:void();" id="stereo_on" class="btn btn-md btn-success">On</a>
+  <a href="javascript:void();" id="stereo_off" class="btn btn-md btn-danger">Off</a>
+  </td>
+</tr>
+
+<tr>
+  <td>Lights</td>
+
+  <td>
+  <a href="javascript:void();" id="lights_on" class="btn btn-md btn-success">On</a>
+  <a href="javascript:void();" id="lights_off" class="btn btn-md btn-danger">Off</a>
+  </td>
+</tr>
+<!-- <tr>
+  <td>yoyo</td>
+
+  <td>
+  <textarea class="form-control" rows="3" id="text_to_say"></textarea>
+  <a id="speech" class="btn btn-md btn-success" onclick="textToSpeech();">Send</a>
+  </td>
+</tr> -->
+
+</table>
+<div class="form-inline">
+<div class="form-group">
+  <input type="text" class="form-control" id="text_to_say" placeholder="Say something">
+</div>
+<a id="speech" class="btn btn-md btn-success" onclick="textToSpeech();">Send</a>
+</div>
+
+<!-- {% if message %}
+<div class="alert alert-success alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>Success!</strong> {{message}}
+</div>
+{% endif %} -->
+<script type="text/javascript">
+  var newImage = new Image();
+  newImage.src = "{{ url_for('static', filename='images/pic.jpg') }}";
+
+  function updateImage() {
+    if(newImage.complete) {
+        document.getElementById("img").src = newImage.src;
+        newImage = new Image();
+        newImage.src = "{{ url_for('static', filename='images/pic.jpg') }}?t=" + new Date().getTime();
+    }
+    runCount++;
+    if(runCount > 240) clearInterval(timerId);
+  }
+  var timerId = setInterval(updateImage, 1000);
+
+// -----------------------------------
+// LIGHT CONTROL
+// -----------------------------------
+    // On
+    $(function() {
+      $('a#lights_on').bind('click', function() {
+        $.getJSON('/_lights_control',{
+          state: "1"}, 
+          function() {
+          $("#result").text("done");
+        });
+        return false;
+      });
+    });
+    // Off
+    $(function() {
+      $('a#lights_off').bind('click', function() {
+        $.getJSON('/_lights_control',{
+          state: "0"}, 
+          function() {
+          $("#result").text("done");
+        });
+        return false;
+      });
+    });
+// -----------------------------------
+// STEREO CONTROL
+// -----------------------------------
+    // On
+    $(function() {
+      $('a#stereo_on').bind('click', function() {
+        $.getJSON('/_stereo_control',{
+          state: "1"}, 
+          function() {
+          $("#result").text("done");
+        });
+        return false;
+      });
+    });
+    // Off
+    $(function() {
+      $('a#stereo_off').bind('click', function() {
+        $.getJSON('/_stereo_control',{
+          state: "0"}, 
+          function() {
+          $("#result").text("done");
+        });
+        return false;
+      });
+    });
+// -----------------------------------
+// SPEECH
+// -----------------------------------
+    function textToSpeech() {
+        $.getJSON('/_speech',{
+          message: document.getElementById("text_to_say").value}, 
+          function() {
+          $("#result").text("done");
+          });
+        document.getElementById("text_to_say").value = "";
+        //return false;
+    }
+  $("#text_to_say").keyup(function(event){
+    if(event.keyCode == 13){
+      $("#speech").click(); 
+    }
+  });
+</script>
+{% endblock %}
+
+
